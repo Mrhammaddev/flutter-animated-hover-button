@@ -7,19 +7,9 @@ void main() {
 class ButtonColors {
   static get backgroundColor => const Color(0xFFECF0F1);
 
-  static get defaultColor => const Color(0xFFC3C4C4);
+  static get defaultColor => const Color(0xff000000);
 
-  static get emerald => const Color(0xFF2ecc71);
-
-  static get peterRiver => const Color(0xFF3498db);
-
-  static get amethyst => const Color(0xFF9b59b6);
-
-  static get wetAsphalt => const Color(0xFF34495e);
-
-  static get carrot => const Color(0xFFe67e22);
-
-  static get alizarin => const Color(0xFFe74c3c);
+  static get emerald => const Color(0xff265FE1);
 }
 
 class MyApp extends StatelessWidget {
@@ -46,40 +36,10 @@ class Button extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           AnimatedButton(
-            height: 40,
-            width: 120,
+            height: 60,
+            width: 320,
             text: 'Emerald',
             animationColor: ButtonColors.emerald,
-          ),
-          AnimatedButton(
-            width: 120,
-            height: 40,
-            animationColor: ButtonColors.peterRiver,
-            text: 'Peter River',
-          ),
-          AnimatedButton(
-            width: 120,
-            height: 40,
-            text: 'Amythyst',
-            animationColor: ButtonColors.amethyst,
-          ),
-          AnimatedButton(
-            width: 120,
-            height: 40,
-            text: 'Wet Asphale',
-            animationColor: ButtonColors.wetAsphalt,
-          ),
-          AnimatedButton(
-            width: 120,
-            height: 40,
-            text: 'Carrot',
-            animationColor: ButtonColors.carrot,
-          ),
-          AnimatedButton(
-            width: 120,
-            height: 40,
-            text: 'Alizarin',
-            animationColor: ButtonColors.alizarin,
           ),
         ],
       ),
@@ -105,7 +65,7 @@ class _AnimatedButtonState extends State<AnimatedButton>
   Color borderColor;
   AnimationController _controller;
   Animation _animation;
-  Animation _borderAnimation;
+  bool _pressed = false;
 
   @override
   void initState() {
@@ -114,18 +74,13 @@ class _AnimatedButtonState extends State<AnimatedButton>
     borderColor = ButtonColors.defaultColor;
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 600),
+      duration: Duration(milliseconds: 300),
     );
     _animation = Tween(begin: 0.0, end: 500.0)
         .animate(CurvedAnimation(curve: Curves.easeIn, parent: _controller))
-      ..addListener(() {
-        setState(() {});
-      });
-    _borderAnimation =
-        ColorTween(begin: ButtonColors.defaultColor, end: widget.animationColor)
-            .animate(
-          CurvedAnimation(curve: Curves.easeInOut, parent: _controller),
-        );
+          ..addListener(() {
+            setState(() {});
+          });
   }
 
   @override
@@ -138,17 +93,18 @@ class _AnimatedButtonState extends State<AnimatedButton>
   Widget build(BuildContext context) {
     return Center(
       child: Container(
+        decoration: BoxDecoration(
+          color: _pressed ? Color(0xff265FE1) : Colors.white,
+        ),
         height: widget.height,
         width: widget.width,
         child: Material(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5.0),
-              side: BorderSide(
-                color: _borderAnimation.value,
-                width: 2,
-              )),
           child: InkWell(
-            onTap: () {},
+            onTap: () {
+              setState(() {
+                _pressed = !_pressed;
+              });
+            },
             onHover: (value) {
               if (value) {
                 _controller.forward();
@@ -165,17 +121,15 @@ class _AnimatedButtonState extends State<AnimatedButton>
               }
             },
             child: Container(
-              color: ButtonColors.backgroundColor,
+              color: Colors.white,
               child: Stack(
                 children: [
-                  Center(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: widget.animationColor,
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      width: _animation.value,
+                  Container(
+                    decoration: BoxDecoration(
+                      color: widget.animationColor,
+                      borderRadius: BorderRadius.circular(5.0),
                     ),
+                    width: _animation.value,
                   ),
                   Center(
                     child: AnimatedDefaultTextStyle(
